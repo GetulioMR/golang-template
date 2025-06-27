@@ -1,0 +1,53 @@
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - go-network
+
+  # Web Interface for MySQL
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "${PHPMYADMIN_PORT}:80"
+    networks:
+      - go-network
+
+  # Go Development Container (for VS Code DevContainer)
+  go-dev:
+    build:
+      context: ./.devcontainer
+      dockerfile: Dockerfile
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    tty: true                  # Allows terminal interaction
+    stdin_open: true           # Keeps STDIN open
+    command: tail -f /dev/null # "Infinite" command to keep container active
+    depends_on:
+      - mysql
+    ports:
+      - "${APP_PORT}:3000"
+    networks:
+      - go-network
+
+volumes:
+  mysql_data:
+
+networks:
+  go-network:
+    driver: bridge

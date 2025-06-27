@@ -1,0 +1,22 @@
+{
+  "name": "Go Dev Container",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "go-dev",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "go.gopath": "/go",
+        "go.toolsEnvVars": {
+          "GO111MODULE": "auto"
+        }
+      },
+      "extensions": [
+        "golang.Go",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 8080],
+  "shutdownAction": "stopCompose"
+}
